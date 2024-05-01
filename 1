@@ -1,717 +1,760 @@
-1.1. Insertion Sort
+
+
+1. Linux Commands
+
+ls
+cd [directory_name]
+pwd
+mkdir [directory_name]
+rm [file_name]
+rmdir [directory_name]
+cp [source] [destination]
+mv [source] [destination]
+touch [file_name]
+cat [file_name]
+less [file_name]
+grep [pattern] [file_name]
+chmod [permissions] [file_name]
+chown [owner]:[group] [file_name]
+sudo [command]
+man [command]
+
+2. Shell Scripts
+
+echo "Hello, world!"
+pwd
+cd /path/to/directory
+
+#!/bin/bash
+
+# Print a message
+echo "Welcome to my shell script!"
+
+# Create a directory
+mkdir test_directory
+
+# Change directory
+cd test_directory
+
+# Create a few files
+touch file1.txt
+touch file2.txt
+
+# List files in the directory
+ls
+
+# Move files to a new directory
+mkdir new_location
+mv file1.txt file2.txt new_location/
+
+# List files in the new directory
+ls new_location/
+
+# Remove the test directory
+cd ..
+rm -r test_directory
+
+3. Process creation using system call
 
 #include <stdio.h>
-
-void insertionSort(int arr[], int n) {
-    int i, key, j;
-    for (i = 1; i < n; i++) {
-        key = arr[i];
-        j = i - 1;
-
-        while (j >= 0 && arr[j] > key) {
-            arr[j + 1] = arr[j];
-            j = j - 1;
-        }
-        arr[j + 1] = key;
-    }
-}
+#include <unistd.h>
 
 int main() {
-    int n;
-    printf("Enter the number of elements: ");
-    scanf("%d", &n);
+    pid_t pid; // Variable to store the process ID
 
-    int arr[n];
-    printf("Enter %d integers:\n", n);
-    for (int i = 0; i < n; i++)
-        scanf("%d", &arr[i]);
+    pid = fork(); // Create a new process
 
-    insertionSort(arr, n);
-
-    printf("Sorted array: \n");
-    for (int i = 0; i < n; i++)
-        printf("%d ", arr[i]);
-    printf("\n");
-    return 0;
-}
-
-1.2. Selection sort
-
-#include <stdio.h>
-
-void selectionSort(int arr[], int n) {
-    int i, j, minIndex, temp;
-    for (i = 0; i < n - 1; i++) {
-        minIndex = i;
-        for (j = i + 1; j < n; j++) {
-            if (arr[j] < arr[minIndex]) {
-                minIndex = j;
-            }
-        }
-        // Swap the found minimum element with the first element
-        temp = arr[minIndex];
-        arr[minIndex] = arr[i];
-        arr[i] = temp;
-    }
-}
-
-int main() {
-    int n;
-    printf("Enter the number of elements: ");
-    scanf("%d", &n);
-
-    int arr[n];
-    printf("Enter %d integers:\n", n);
-    for (int i = 0; i < n; i++)
-        scanf("%d", &arr[i]);
-
-    selectionSort(arr, n);
-
-    printf("Sorted array: \n");
-    for (int i = 0; i < n; i++)
-        printf("%d ", arr[i]);
-    printf("\n");
-    return 0;
-}
-
-2.1. Merge Sort
-
-#include <stdio.h>
-#include <stdlib.h>
-
-void merge(int arr[], int l, int m, int r) {
-    int i, j, k;
-    int n1 = m - l + 1;
-    int n2 = r - m;
-
-    // Create temporary arrays
-    int L[n1], R[n2];
-
-    // Copy data to temporary arrays L[] and R[]
-    for (i = 0; i < n1; i++)
-        L[i] = arr[l + i];
-    for (j = 0; j < n2; j++)
-        R[j] = arr[m + 1 + j];
-
-    // Merge the temporary arrays back into arr[l..r]
-    i = 0; // Initial index of first subarray
-    j = 0; // Initial index of second subarray
-    k = l; // Initial index of merged subarray
-    while (i < n1 && j < n2) {
-        if (L[i] <= R[j]) {
-            arr[k] = L[i];
-            i++;
-        } else {
-            arr[k] = R[j];
-            j++;
-        }
-        k++;
-    }
-
-    // Copy the remaining elements of L[], if any
-    while (i < n1) {
-        arr[k] = L[i];
-        i++;
-        k++;
-    }
-
-    // Copy the remaining elements of R[], if any
-    while (j < n2) {
-        arr[k] = R[j];
-        j++;
-        k++;
-    }
-}
-
-void mergeSort(int arr[], int l, int r) {
-    if (l < r) {
-        // Same as (l+r)/2, but avoids overflow for large l and r
-        int m = l + (r - l) / 2;
-
-        // Sort first and second halves
-        mergeSort(arr, l, m);
-        mergeSort(arr, m + 1, r);
-
-        // Merge the sorted halves
-        merge(arr, l, m, r);
-    }
-}
-
-int main() {
-    int n;
-    printf("Enter the number of elements: ");
-    scanf("%d", &n);
-
-    int arr[n];
-    printf("Enter %d integers:\n", n);
-    for (int i = 0; i < n; i++)
-        scanf("%d", &arr[i]);
-
-    mergeSort(arr, 0, n - 1);
-
-    printf("Sorted array: \n");
-    for (int i = 0; i < n; i++)
-        printf("%d ", arr[i]);
-    printf("\n");
-    return 0;
-}
-
-2.2. Quick Sort
-
-#include <stdio.h>
-
-void swap(int* a, int* b) {
-    int t = *a;
-    *a = *b;
-    *b = t;
-}
-
-int partition(int arr[], int low, int high) {
-    int pivot = arr[high];
-    int i = (low - 1);
-
-    for (int j = low; j <= high - 1; j++) {
-        if (arr[j] < pivot) {
-            i++;
-            swap(&arr[i], &arr[j]);
-        }
-    }
-    swap(&arr[i + 1], &arr[high]);
-    return (i + 1);
-}
-
-void quickSort(int arr[], int low, int high) {
-    if (low < high) {
-        int pi = partition(arr, low, high);
-        quickSort(arr, low, pi - 1);
-        quickSort(arr, pi + 1, high);
-    }
-}
-
-int main() {
-    int n;
-    printf("Enter the number of elements: ");
-    scanf("%d", &n);
-
-    int arr[n];
-    printf("Enter %d integers:\n", n);
-    for (int i = 0; i < n; i++)
-        scanf("%d", &arr[i]);
-
-    quickSort(arr, 0, n - 1);
-
-    printf("Sorted array: \n");
-    for (int i = 0; i < n; i++)
-        printf("%d ", arr[i]);
-    printf("\n");
-    return 0;
-}
-
-3.1. Fractional Knapsack
-
-#include <stdio.h>
-#include <stdlib.h>
-
-typedef struct {
-    double value;
-    double weight;
-    double ratio;
-} Item;
-
-int compare(const void* a, const void* b) {
-    Item* item1 = (Item*)a;
-    Item* item2 = (Item*)b;
-    if (item1->ratio < item2->ratio)
+    if (pid < 0) { // Error occurred
+        fprintf(stderr, "Fork failed\n");
         return 1;
-    else if (item1->ratio > item2->ratio)
-        return -1;
-    else
-        return 0;
-}
-
-double fractionalKnapsack(int n, Item items[], double capacity) {
-    qsort(items, n, sizeof(Item), compare);
-
-    double totalValue = 0.0;
-    for (int i = 0; i < n; i++) {
-        if (capacity <= 0)
-            break;
-
-        if (items[i].weight <= capacity) {
-            totalValue += items[i].value;
-            capacity -= items[i].weight;
-        } else {
-            totalValue += (capacity / items[i].weight) * items[i].value;
-            break;
-        }
+    } else if (pid == 0) { // Child process
+        printf("Child process is running\n");
+        // Add code for child process here
+    } else { // Parent process
+        printf("Parent process is running\n");
+        // Add code for parent process here
     }
-    return totalValue;
-}
-
-int main() {
-    int n;
-    printf("Enter the number of items: ");
-    scanf("%d", &n);
-
-    Item items[n];
-    printf("Enter the value and weight of each item:\n");
-    for (int i = 0; i < n; i++) {
-        printf("Item %d: ", i + 1);
-        scanf("%lf %lf", &items[i].value, &items[i].weight);
-        items[i].ratio = items[i].value / items[i].weight;
-    }
-
-    double capacity;
-    printf("Enter the capacity of the knapsack: ");
-    scanf("%lf", &capacity);
-
-    double maxValue = fractionalKnapsack(n, items, capacity);
-    printf("The maximum value that can be obtained is: %.2lf\n", maxValue);
 
     return 0;
 }
 
-4.1. Job Sequencing With Deadlines
+Alternative
 
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct {
-    int jobID;
-    int deadline;
-    int profit;
-} Job;
-
-int compare(const void* a, const void* b) {
-    return ((Job*)b)->profit - ((Job*)a)->profit;
-}
-
-void jobSequencing(int n, Job jobs[]) {
-    qsort(jobs, n, sizeof(Job), compare);
-
-    int maxDeadline = 0;
-    for (int i = 0; i < n; i++) {
-        if (jobs[i].deadline > maxDeadline)
-            maxDeadline = jobs[i].deadline;
-    }
-
-    int result[maxDeadline];
-    for (int i = 0; i < maxDeadline; i++)
-        result[i] = -1;
-
-    int totalProfit = 0;
-    for (int i = 0; i < n; i++) {
-        for (int j = jobs[i].deadline - 1; j >= 0; j--) {
-            if (result[j] == -1) {
-                result[j] = jobs[i].jobID;
-                totalProfit += jobs[i].profit;
-                break;
-            }
-        }
-    }
-
-    printf("Selected Jobs: ");
-    for (int i = 0; i < maxDeadline; i++) {
-        if (result[i] != -1)
-            printf("%d ", result[i]);
-    }
-    printf("\nTotal Profit: %d\n", totalProfit);
-}
-
 int main() {
-    int n;
-    printf("Enter the number of jobs: ");
-    scanf("%d", &n);
-
-    Job jobs[n];
-    printf("Enter the jobID, deadline, and profit for each job:\n");
-    for (int i = 0; i < n; i++) {
-        printf("Job %d: ", i + 1);
-        scanf("%d %d %d", &jobs[i].jobID, &jobs[i].deadline, &jobs[i].profit);
-    }
-
-    jobSequencing(n, jobs);
+    // Execute ls command using system call
+    system("ls -l");
 
     return 0;
 }
 
-5.1. Flloyd Warshall
+4. WAP To implement FCFS Scheduling
 
 #include <stdio.h>
-#include <limits.h>
 
-#define INF INT_MAX
-#define MAX_VERTICES 100
+// Function to calculate average waiting time
+void findWaitingTime(int n, int bt[], int wt[]) {
+    wt[0] = 0; // Waiting time for first process is 0
 
-void floydWarshall(int graph[MAX_VERTICES][MAX_VERTICES], int V) {
-    int dist[V][V];
+    // Calculate waiting time
+    for (int i = 1; i < n; i++)
+        wt[i] = wt[i - 1] + bt[i - 1];
+}
 
-    // Initialize distance matrix
-    for (int i = 0; i < V; i++)
-        for (int j = 0; j < V; j++)
-            dist[i][j] = graph[i][j];
+// Function to calculate turnaround time
+void findTurnAroundTime(int n, int bt[], int wt[], int tat[]) {
+    // Calculate turnaround time
+    for (int i = 0; i < n; i++)
+        tat[i] = bt[i] + wt[i];
+}
 
-    // Apply Floyd-Warshall algorithm
-    for (int k = 0; k < V; k++) {
-        for (int i = 0; i < V; i++) {
-            for (int j = 0; j < V; j++) {
-                if (dist[i][k] != INF && dist[k][j] != INF &&
-                    dist[i][k] + dist[k][j] < dist[i][j]) {
-                    dist[i][j] = dist[i][k] + dist[k][j];
+// Function to calculate average time
+void findAverageTime(int n, int bt[]) {
+    int wt[n], tat[n], total_wt = 0, total_tat = 0;
+
+    // Calculate waiting time
+    findWaitingTime(n, bt, wt);
+
+    // Calculate turnaround time
+    findTurnAroundTime(n, bt, wt, tat);
+
+    // Display processes along with all details
+    printf("Processes  Burst Time  Waiting Time  Turn-Around Time\n");
+    for (int i = 0; i < n; i++) {
+        total_wt += wt[i];
+        total_tat += tat[i];
+        printf("   %d\t\t%d\t\t%d\t\t%d\n", i + 1, bt[i], wt[i], tat[i]);
+    }
+
+    // Calculate average waiting time and turnaround time
+    float avg_wt = (float)total_wt / n;
+    float avg_tat = (float)total_tat / n;
+    printf("\nAverage Waiting Time: %.2f\n", avg_wt);
+    printf("Average Turn-Around Time: %.2f\n", avg_tat);
+}
+
+int main() {
+    int n;
+
+    printf("Enter the number of processes: ");
+    scanf("%d", &n);
+
+    // Processes
+    int processes[n];
+
+    // Burst time of all processes
+    int burst_time[n];
+
+    // Input burst times from the user
+    printf("Enter the burst time for each process:\n");
+    for (int i = 0; i < n; i++) {
+        printf("Burst time for process %d: ", i + 1);
+        scanf("%d", &burst_time[i]);
+        processes[i] = i + 1;
+    }
+
+    // Function call to find average waiting time
+    findAverageTime(n, burst_time);
+    return 0;
+}
+
+5. WAP To implement SJF Scheduling
+
+#include <stdio.h>
+#include <stdlib.h>
+
+// Process structure
+typedef struct {
+    int id;
+    int burst_time;
+    int arrival_time;
+    int waiting_time;
+    int turnaround_time;
+} Process;
+
+// Function to sort processes by arrival time
+void sort_by_arrival_time(Process processes[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (processes[j].arrival_time > processes[j + 1].arrival_time) {
+                // Swap processes[j] and processes[j+1]
+                Process temp = processes[j];
+                processes[j] = processes[j + 1];
+                processes[j + 1] = temp;
+            }
+        }
+    }
+}
+
+// Function to sort processes by burst time (SJF)
+void sort_by_burst_time(Process processes[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (processes[j].burst_time > processes[j + 1].burst_time) {
+                // Swap processes[j] and processes[j+1]
+                Process temp = processes[j];
+                processes[j] = processes[j + 1];
+                processes[j + 1] = temp;
+            }
+        }
+    }
+}
+
+// Function to calculate waiting and turnaround times
+void calculate_times(Process processes[], int n) {
+    int total_waiting_time = 0;
+    int total_turnaround_time = 0;
+
+    processes[0].waiting_time = 0;
+    processes[0].turnaround_time = processes[0].burst_time;
+
+    for (int i = 1; i < n; i++) {
+        processes[i].waiting_time = processes[i - 1].waiting_time + processes[i - 1].burst_time;
+        processes[i].turnaround_time = processes[i].waiting_time + processes[i].burst_time;
+    }
+
+    // Calculate total waiting and turnaround times
+    for (int i = 0; i < n; i++) {
+        total_waiting_time += processes[i].waiting_time;
+        total_turnaround_time += processes[i].turnaround_time;
+    }
+
+    // Print process details
+    printf("Process\tBurst Time\tArrival Time\tWaiting Time\tTurnaround Time\n");
+    for (int i = 0; i < n; i++) {
+        printf("%d\t%d\t\t%d\t\t%d\t\t%d\n", processes[i].id, processes[i].burst_time, processes[i].arrival_time, processes[i].waiting_time, processes[i].turnaround_time);
+    }
+
+    // Print average waiting and turnaround times
+    printf("Average Waiting Time: %.2f\n", (float)total_waiting_time / n);
+    printf("Average Turnaround Time: %.2f\n", (float)total_turnaround_time / n);
+}
+
+int main() {
+    int n;
+    printf("Enter the number of processes: ");
+    scanf("%d", &n);
+
+    Process *processes = (Process *)malloc(n * sizeof(Process));
+
+    // Input process details
+    for (int i = 0; i < n; i++) {
+        printf("Enter arrival time and burst time for process %d: ", i + 1);
+        scanf("%d %d", &processes[i].arrival_time, &processes[i].burst_time);
+        processes[i].id = i + 1;
+    }
+
+    // Sort processes by arrival time
+    sort_by_arrival_time(processes, n);
+
+    // Schedule processes using SJF
+    int current_time = 0;
+    for (int i = 0; i < n; i++) {
+        if (processes[i].arrival_time > current_time) {
+            current_time = processes[i].arrival_time;
+        }
+        processes[i].waiting_time = current_time - processes[i].arrival_time;
+        processes[i].turnaround_time = processes[i].waiting_time + processes[i].burst_time;
+        current_time += processes[i].burst_time;
+    }
+
+    // Calculate average waiting and turnaround times
+    calculate_times(processes, n);
+
+    free(processes);
+    return 0;
+}
+
+
+6. Bounded Buffer Problem
+
+#include <stdio.h>
+#include <unistd.h>
+
+#define BUFFER_SIZE 5
+
+int buffer[BUFFER_SIZE];
+int in = 0, out = 0;
+
+void producer() {
+    int item;
+    for (int i = 0; i < BUFFER_SIZE; i++) {
+        printf("Producer: Enter item %d: ", i+1);
+        scanf("%d", &item);
+        
+        while (((in + 1) % BUFFER_SIZE) == out) {
+            // Buffer is full, wait for consumer to consume
+            printf("Buffer is full. Waiting for consumer...\n");
+            sleep(1);
+        }
+
+        // Critical section (insert item into buffer)
+        buffer[in] = item;
+        in = (in + 1) % BUFFER_SIZE;
+    }
+}
+
+void consumer() {
+    int item;
+    for (int i = 0; i < BUFFER_SIZE; i++) {
+        while (in == out) {
+            // Buffer is empty, wait for producer to produce
+            printf("Buffer is empty. Waiting for producer...\n");
+            sleep(1);
+        }
+
+        // Critical section (remove item from buffer)
+        item = buffer[out];
+        out = (out + 1) % BUFFER_SIZE;
+
+        // Process item
+        printf("Consumer: Consumed item %d: %d\n", i+1, item);
+    }
+}
+
+int main() {
+    producer();
+    consumer();
+
+    return 0;
+}
+
+7.  WAP To Banker Algorithm
+
+#include<stdio.h>
+int main()
+{
+int k=0, output[10],d=0,t=0,ins[5],i,avail[5],allocated[10][5],need[10][5],MAX[10]
+[5],pno,P[10],j,rz, count=0;
+printf("\n Enter the number of resources : ");
+scanf("%d", &rz);
+printf("\n enter the max instances of each resources\n");
+for (i=0;i<rz;i++)
+{
+avail[i]=0;
+printf("%c= ",(i+97));
+scanf("%d",&ins[i]);
+}
+printf("\n Enter the number of processes : ");
+scanf("%d", &pno);
+printf("\n Enter the allocation matrix \n ");
+for (i=0;i<rz;i++)
+printf(" %c",(i+97));
+printf("\n");
+for (i=0;i <pno;i++)
+{
+P[i]=i;
+printf("P[%d] ",P[i]);
+for (j=0;j<rz;j++)
+{
+scanf("%d",&allocated[i][j]);
+avail[j]+=allocated[i][j];
+}
+}
+printf("\nEnter the MAX matrix \n ");
+for (i=0;i<rz;i++)
+{
+printf(" %c",(i+97));
+avail[i]=ins[i]-avail[i];
+}
+printf("\n");
+for (i=0;i <pno;i++)
+{
+printf("P[%d] ",i);
+for (j=0;j<rz;j++)
+scanf("%d", &MAX[i][j]);
+}
+printf("\n");
+A: d=-1;
+for (i=0;i <pno;i++)
+{
+count=0;
+t=P[i];
+for (j=0;j<rz;j++)
+{
+need[t][j] = MAX[t][j]-allocated[t][j];
+if(need[t][j]<=avail[j])
+count++;
+}
+if(count==rz)
+{
+output[k++]=P[i];
+for (j=0;j<rz;j++)
+avail[j]+=allocated[t][j];
+}
+else
+P[++d]=P[i];
+}
+if(d!=-1)
+{
+pno=d+1;
+goto A;
+}
+printf("\t <");
+for (i=0;i<k;i++)
+printf(" P[%d] ",output[i]);
+printf(">");
+return 0;
+}
+
+OUTPUT
+
+Enter the number of resources : 3
+enter the max instances of each resources
+a= 10
+b= 5
+c= 7
+Enter the number of processes : 5
+Enter the allocation matrix
+a b c
+P[0] 0 1 0
+P[1] 2 0 0
+P[2] 3 0 2
+P[3] 2 1 1
+P[4] 0 0 2
+Enter the MAX matrix
+a b c
+P[0] 7 5 3
+P[1] 3 2 2
+P[2] 9 0 2
+P[3] 2 2 2
+P[4] 4 3 3
+
+8. WAP To first fit, Best fit, Worst fit
+
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MEMORY_SIZE 100
+
+int memory[MEMORY_SIZE];
+
+void initialize_memory() {
+    for (int i = 0; i < MEMORY_SIZE; i++) {
+        memory[i] = -1; // -1 indicates that the memory block is free
+    }
+}
+
+void display_memory() {
+    printf("Memory Status:\n");
+    for (int i = 0; i < MEMORY_SIZE; i++) {
+        if (memory[i] == -1) {
+            printf("- "); // Free memory block
+        } else {
+            printf("%d ", memory[i]); // Process ID occupying the memory block
+        }
+    }
+    printf("\n");
+}
+
+void first_fit(int process_id, int size) {
+    for (int i = 0; i < MEMORY_SIZE; i++) {
+        if (memory[i] == -1) {
+            int j;
+            for (j = i; j < i + size; j++) {
+                if (memory[j] != -1) {
+                    break; // Memory block not large enough for the process
                 }
             }
+            if (j == i + size) {
+                // Allocate memory
+                for (int k = i; k < i + size; k++) {
+                    memory[k] = process_id;
+                }
+                printf("Process %d allocated memory from %d to %d (First Fit).\n", process_id, i, j - 1);
+                return;
+            }
+        }
+    }
+    printf("Process %d cannot be allocated memory (First Fit).\n", process_id);
+}
+
+void best_fit(int process_id, int size) {
+    int min_size = MEMORY_SIZE;
+    int start_index = -1;
+
+    for (int i = 0; i < MEMORY_SIZE; i++) {
+        if (memory[i] == -1) {
+            int j;
+            for (j = i; j < i + size; j++) {
+                if (memory[j] != -1) {
+                    break; // Memory block not large enough for the process
+                }
+            }
+            if (j == i + size && j - i < min_size) {
+                // Found a better fit
+                min_size = j - i;
+                start_index = i;
+            }
         }
     }
 
-    // Print the shortest distances between every pair of vertices
-    printf("Shortest distances between every pair of vertices:\n");
-    for (int i = 0; i < V; i++) {
-        for (int j = 0; j < V; j++) {
-            if (dist[i][j] == INF)
-                printf("INF\t");
-            else
-                printf("%d\t", dist[i][j]);
+    if (start_index != -1) {
+        // Allocate memory
+        for (int k = start_index; k < start_index + size; k++) {
+            memory[k] = process_id;
         }
-        printf("\n");
+        printf("Process %d allocated memory from %d to %d (Best Fit).\n", process_id, start_index, start_index + min_size - 1);
+    } else {
+        printf("Process %d cannot be allocated memory (Best Fit).\n", process_id);
+    }
+}
+
+void worst_fit(int process_id, int size) {
+    int max_size = 0;
+    int start_index = -1;
+
+    for (int i = 0; i < MEMORY_SIZE; i++) {
+        if (memory[i] == -1) {
+            int j;
+            for (j = i; j < i + size; j++) {
+                if (memory[j] != -1) {
+                    break; // Memory block not large enough for the process
+                }
+            }
+            if (j == i + size && j - i > max_size) {
+                // Found a larger memory block
+                max_size = j - i;
+                start_index = i;
+            }
+        }
+    }
+
+    if (start_index != -1) {
+        // Allocate memory
+        for (int k = start_index; k < start_index + size; k++) {
+            memory[k] = process_id;
+        }
+        printf("Process %d allocated memory from %d to %d (Worst Fit).\n", process_id, start_index, start_index + max_size - 1);
+    } else {
+        printf("Process %d cannot be allocated memory (Worst Fit).\n", process_id);
     }
 }
 
 int main() {
-    int V;
-    printf("Enter the number of vertices: ");
-    scanf("%d", &V);
+    int n, choice, process_id, size;
 
-    int graph[MAX_VERTICES][MAX_VERTICES];
-    printf("Enter the adjacency matrix (INF for unreachable):\n");
-    for (int i = 0; i < V; i++) {
-        for (int j = 0; j < V; j++) {
-            scanf("%d", &graph[i][j]);
-            if (graph[i][j] == INF)
-                graph[i][j] = INF;
-        }
-    }
+    initialize_memory();
 
-    floydWarshall(graph, V);
-
-    return 0;
-}
-
-6.1. Longest Common Subsequence 
-
-#include <stdio.h>
-#include <string.h>
-
-#define MAX_LEN 100
-
-int max(int a, int b) {
-    return (a > b) ? a : b;
-}
-
-void lcs(char* X, char* Y, int m, int n) {
-    int L[m + 1][n + 1];
-    int i, j;
-
-    // Build L[m+1][n+1] in bottom-up fashion
-    for (i = 0; i <= m; i++) {
-        for (j = 0; j <= n; j++) {
-            if (i == 0 || j == 0)
-                L[i][j] = 0;
-            else if (X[i - 1] == Y[j - 1])
-                L[i][j] = L[i - 1][j - 1] + 1;
-            else
-                L[i][j] = max(L[i - 1][j], L[i][j - 1]);
-        }
-    }
-
-    // Following code is used to print LCS
-    int index = L[m][n];
-    char lcs[index + 1];
-    lcs[index] = '\0'; // Set the terminating character
-
-    // Start from the right-bottom corner and store characters in lcs[]
-    i = m;
-    j = n;
-    while (i > 0 && j > 0) {
-        // If current character in X[] and Y[] are same, then
-        // current character is part of LCS
-        if (X[i - 1] == Y[j - 1]) {
-            lcs[index - 1] = X[i - 1];
-            i--;
-            j--;
-            index--;
-        }
-        // If not same, then find the larger of two and go in the direction of larger value
-        else if (L[i - 1][j] > L[i][j - 1])
-            i--;
-        else
-            j--;
-    }
-
-    // Print the LCS
-    printf("Longest Common Subsequence: %s\n", lcs);
-}
-
-int main() {
-    char X[MAX_LEN], Y[MAX_LEN];
-    printf("Enter the first string: ");
-    scanf("%s", X);
-    printf("Enter the second string: ");
-    scanf("%s", Y);
-
-    int m = strlen(X);
-    int n = strlen(Y);
-
-    lcs(X, Y, m, n);
-
-    return 0;
-}
-
-7.1. N-Queens
-
-#include <stdio.h>
-#include <stdbool.h>
-
-#define N 10
-
-int board[N][N];
-
-bool isSafe(int row, int col, int n) {
-    int i, j;
-
-    // Check this row on the left side
-    for (i = 0; i < col; i++) {
-        if (board[row][i])
-            return false;
-    }
-
-    // Check upper diagonal on left side
-    for (i = row, j = col; i >= 0 && j >= 0; i--, j--) {
-        if (board[i][j])
-            return false;
-    }
-
-    // Check lower diagonal on left side
-    for (i = row, j = col; j >= 0 && i < n; i++, j--) {
-        if (board[i][j])
-            return false;
-    }
-
-    return true;
-}
-
-bool solveNQueensUtil(int col, int n) {
-    if (col >= n)
-        return true;
-
-    for (int i = 0; i < n; i++) {
-        if (isSafe(i, col, n)) {
-            board[i][col] = 1;
-
-            if (solveNQueensUtil(col + 1, n))
-                return true;
-
-            board[i][col] = 0; // Backtrack
-        }
-    }
-
-    return false;
-}
-
-void solveNQueens(int n) {
-    if (!solveNQueensUtil(0, n)) {
-        printf("Solution does not exist for %d queens.\n", n);
-        return;
-    }
-
-    printf("Solution for %d queens:\n", n);
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
-            printf("%d ", board[i][j]);
-        }
-        printf("\n");
-    }
-}
-
-int main() {
-    int n;
-    printf("Enter the number of queens: ");
+    printf("Enter number of processes: ");
     scanf("%d", &n);
 
-    if (n <= 0 || n > N) {
-        printf("Invalid input. Please enter a number between 1 and %d.\n", N);
-        return 1;
-    }
+    for (int i = 0; i < n; i++) {
+        printf("Enter process ID and size: ");
+        scanf("%d %d", &process_id, &size);
 
-    solveNQueens(n);
+        printf("Choose memory allocation algorithm (1: First Fit, 2: Best Fit, 3: Worst Fit): ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                first_fit(process_id, size);
+                break;
+            case 2:
+                best_fit(process_id, size);
+                break;
+            case 3:
+                worst_fit(process_id, size);
+                break;
+            default:
+                printf("Invalid choice!\n");
+                break;
+        }
+
+        display_memory();
+    }
 
     return 0;
 }
 
-8.1. Graph Coloring Problem
+
+9. To implement FIFO Page replacement
 
 #include <stdio.h>
 #include <stdbool.h>
 
-#define MAX_VERTICES 100
+#define FRAME_SIZE 3 // Size of the page frame
 
-bool isSafe(int v, bool graph[MAX_VERTICES][MAX_VERTICES], int color[], int c, int V) {
-    for (int i = 0; i < V; i++) {
-        if (graph[v][i] && c == color[i])
-            return false;
-    }
-    return true;
-}
-
-bool graphColoringUtil(bool graph[MAX_VERTICES][MAX_VERTICES], int m, int color[], int v, int V) {
-    if (v == V)
-        return true;
-
-    for (int c = 1; c <= m; c++) {
-        if (isSafe(v, graph, color, c, V)) {
-            color[v] = c;
-            if (graphColoringUtil(graph, m, color, v + 1, V))
-                return true;
-            color[v] = 0; // Backtrack
+void display(int frame[], int size) {
+    for (int i = 0; i < size; i++) {
+        if (frame[i] == -1) {
+            printf("- ");
+        } else {
+            printf("%d ", frame[i]);
         }
     }
-
-    return false;
+    printf("\n");
 }
 
-bool graphColoring(bool graph[MAX_VERTICES][MAX_VERTICES], int m, int V) {
-    int color[V];
-    for (int i = 0; i < V; i++)
-        color[i] = 0;
+bool search(int frame[], int size, int page) {
+    for (int i = 0; i < size; i++) {
+        if (frame[i] == page) {
+            return true; // Page found in frame
+        }
+    }
+    return false; // Page not found in frame
+}
 
-    if (!graphColoringUtil(graph, m, color, 0, V)) {
-        printf("Solution does not exist.\n");
-        return false;
+void fifo(int pages[], int n, int frame_size) {
+    int frame[frame_size]; // Page frame
+    int pointer = 0; // Pointer to indicate the oldest page in the frame
+    int page_faults = 0; // Counter for page faults
+
+    // Initialize frame with empty slots (-1)
+    for (int i = 0; i < frame_size; i++) {
+        frame[i] = -1;
     }
 
-    printf("Solution found with colors assigned as follows:\n");
-    for (int i = 0; i < V; i++)
-        printf("Vertex %d: Color %d\n", i, color[i]);
+    printf("Page Frame: ");
+    display(frame, frame_size);
 
-    return true;
+    // Iterate through pages
+    for (int i = 0; i < n; i++) {
+        printf("Accessing page %d...\n", pages[i]);
+        if (!search(frame, frame_size, pages[i])) {
+            // Page fault: page not found in frame
+            page_faults++;
+            frame[pointer] = pages[i]; // Replace the oldest page with the new page
+            pointer = (pointer + 1) % frame_size; // Update pointer to point to the next oldest page
+        }
+        printf("Page Frame: ");
+        display(frame, frame_size);
+    }
+
+    printf("Total page faults: %d\n", page_faults);
 }
 
 int main() {
-    int V, m;
-    printf("Enter the number of vertices: ");
-    scanf("%d", &V);
-    printf("Enter the number of colors: ");
-    scanf("%d", &m);
+    int n; // Number of pages
+    printf("Enter the number of pages: ");
+    scanf("%d", &n);
 
-    bool graph[MAX_VERTICES][MAX_VERTICES];
-    printf("Enter the adjacency matrix (1 for connected, 0 for not connected):\n");
-    for (int i = 0; i < V; i++) {
-        for (int j = 0; j < V; j++) {
-            scanf("%d", &graph[i][j]);
-        }
+    int pages[n]; // Array to store the pages
+
+    printf("Enter the reference string of pages:\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &pages[i]);
     }
 
-    graphColoring(graph, m, V);
+    fifo(pages, n, FRAME_SIZE);
 
     return 0;
 }
 
-9.1. Naive String Mtching
+10. Disk Scheduling Scan
 
 #include <stdio.h>
-#include <string.h>
+#include <stdlib.h>
 
-void naiveStringMatching(char* text, char* pattern) {
-    int m = strlen(text);
-    int n = strlen(pattern);
-
-    for (int i = 0; i <= m - n; i++) {
-        int j;
-        for (j = 0; j < n; j++) {
-            if (text[i + j] != pattern[j])
-                break;
-        }
-        if (j == n)
-            printf("Pattern found at index %d\n", i);
-    }
-}
-
-int main() {
-    char text[100], pattern[100];
-    printf("Enter the text: ");
-    scanf("%s", text);
-    printf("Enter the pattern: ");
-    scanf("%s", pattern);
-
-    naiveStringMatching(text, pattern);
-
-    return 0;
-}
-
-10.1. Rabin Karp 
-
-#include <stdio.h>
-#include <string.h>
-
-#define d 256 // number of characters in the input alphabet
-
-void rabinKarp(char* pattern, char* text, int q) {
-    int M = strlen(pattern);
-    int N = strlen(text);
-    int i, j;
-    int p = 0; // hash value for pattern
-    int t = 0; // hash value for text
-    int h = 1;
-
-    // The value of h would be "pow(d, M-1)%q"
-    for (i = 0; i < M - 1; i++)
-        h = (h * d) % q;
-
-    // Calculate the hash value of pattern and first window of text
-    for (i = 0; i < M; i++) {
-        p = (d * p + pattern[i]) % q;
-        t = (d * t + text[i]) % q;
-    }
-
-    // Slide the pattern over text one by one
-    for (i = 0; i <= N - M; i++) {
-        // Check the hash values of current window of text and pattern
-        // If the hash values match then only check for characters one by one
-        if (p == t) {
-            // Check for characters one by one
-            for (j = 0; j < M; j++) {
-                if (text[i + j] != pattern[j])
-                    break;
+void sort(int arr[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                // Swap arr[j] and arr[j+1]
+                int temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
             }
-            if (j == M) // if pattern[0...M-1] = text[i, i+1, ...i+M-1]
-                printf("Pattern found at index %d\n", i);
-        }
-
-        // Calculate hash value for next window of text: Remove leading digit,
-        // add trailing digit
-        if (i < N - M) {
-            t = (d * (t - text[i] * h) + text[i + M]) % q;
-
-            // We might get negative value of t, converting it to positive
-            if (t < 0)
-                t = (t + q);
         }
     }
 }
 
-int main() {
-    char text[100], pattern[100];
-    int q; // A prime number
-    printf("Enter the text: ");
-    scanf("%s", text);
-    printf("Enter the pattern: ");
-    scanf("%s", pattern);
-    printf("Enter a prime number (q): ");
-    scanf("%d", &q);
+void scan(int requests[], int n, int head, char direction) {
+    sort(requests, n); // Sort the requests array
 
-    rabinKarp(pattern, text, q);
+    int total_movement = 0; // Total head movement
+    int cur_pos = head; // Current position of the head
+    int i, start_index, end_index;
+
+    // Find the start and end index of requests on the left and right side of the head
+    for (i = 0; i < n; i++) {
+        if (requests[i] >= head) {
+            start_index = i;
+            break;
+        }
+    }
+
+    for (i = start_index; i < n; i++) {
+        if (requests[i] > head) {
+            end_index = i - 1;
+            break;
+        }
+    }
+    if (i == n) {
+        end_index = n - 1;
+    }
+
+    // Scan towards right
+    if (direction == 'r') {
+        printf("Head movement sequence: %d ", cur_pos);
+        for (i = start_index; i <= end_index; i++) {
+            total_movement += abs(cur_pos - requests[i]);
+            cur_pos = requests[i];
+            printf("-> %d ", cur_pos);
+        }
+
+        // Go to the end of the disk
+        total_movement += abs(cur_pos - 199);
+        cur_pos = 199;
+        printf("-> %d ", cur_pos);
+
+        // Scan towards left
+        printf("-> 0 ");
+        total_movement += cur_pos;
+
+        // Go back to the starting position
+        total_movement += 0;
+        printf("-> %d\n", 0);
+    }
+    // Scan towards left
+    else {
+        printf("Head movement sequence: %d ", cur_pos);
+        for (i = end_index; i >= start_index; i--) {
+            total_movement += abs(cur_pos - requests[i]);
+            cur_pos = requests[i];
+            printf("-> %d ", cur_pos);
+        }
+
+        // Go to the beginning of the disk
+        total_movement += abs(cur_pos - 0);
+        cur_pos = 0;
+        printf("-> %d ", cur_pos);
+
+        // Scan towards right
+        printf("-> 199 ");
+        total_movement += (199 - cur_pos);
+
+        // Go back to the starting position
+        total_movement += 199;
+        printf("-> %d\n", 199);
+    }
+
+    printf("Total head movement: %d\n", total_movement);
+}
+
+int main() {
+    int n, head;
+    char direction;
+    
+    printf("Enter the number of disk requests: ");
+    scanf("%d", &n);
+    
+    int requests[n];
+    
+    printf("Enter the disk requests: ");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &requests[i]);
+    }
+
+    printf("Enter the initial position of the head: ");
+    scanf("%d", &head);
+
+    printf("Enter the direction of head movement (l for left, r for right): ");
+    scanf(" %c", &direction);
+    
+    scan(requests, n, head, direction);
 
     return 0;
 }
-
-
-
